@@ -1,0 +1,76 @@
+# =============================================================================
+# LangGraph Multi-Agent Support System — Docker Compose
+# Galaxy Telecom CRM AI Support
+#
+# Supporting services:
+#   - langgraph-support  : main application
+#
+# External cloud services (no local containers needed):
+#   - Anthropic Claude API  : LLM provider
+#   - Qdrant Cloud          : vector database for RAG
+#   - LangFuse Cloud        : LLM observability and tracing
+#   - Slack Webhooks        : escalation alerts
+#
+# Secrets are loaded from .env — never baked into the image.
+# Copy .env.example → .env and fill in your keys before running.
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Main application: LangGraph multi-agent support system
+  # ---------------------------------------------------------------------------
+  langgraph-support:
+    image: galaxy-telecom/langgraph-multi-agent-support:latest
+
+    # Uncomment to build locally instead of pulling from Docker Hub:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   target: runtime
+
+    container_name: langgraph-support
+
+    # Load all secrets from .env — none are baked into the image
+    env_file:
+      - .env
+
+    # Override individual env vars here if needed (non-secret defaults)
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SQLITE_DB_PATH=/app/data/audit.db
+
+    # Named volume for SQLite audit log persistence across restarts
+    volumes:
+      - audit-data:/app/data
+
+    # Restart policy — on-failure is appropriate for a CLI agent;
+    # change to 'unless-stopped' for a long-running API service
+    restart: on-failure
+
+    # Resource limits — reasonable defaults for a multi-agent LLM system
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: "1.0"
+        reservations:
+          memory: 256m
+          cpus: "0.25"
+
+    # Health check: verifies Python environment is intact
+    # Adjust or replace with an HTTP check if you add a FastAPI endpoint
+    healthcheck:
+      test: ["CMD", "python", "-c", "import langchain, langgraph; print('ok')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+# ---------------------------------------------------------------------------
+# Named volumes
+# ---------------------------------------------------------------------------
+volumes:
+  audit-data:
+    name: langgraph-audit-data
+    driver: local

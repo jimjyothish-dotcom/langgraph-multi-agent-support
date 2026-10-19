@@ -1,0 +1,83 @@
+# =============================================================================
+# .dockerignore — LangGraph Multi-Agent Support System
+# Excludes files that should never enter the Docker build context.
+# Keeps the image lean and prevents secrets from leaking into the image.
+# =============================================================================
+
+# --- Secrets and local configuration ---
+# CRITICAL: .env must never be baked into the image
+.env
+*.env
+!.env.example
+
+# --- Python virtual environments ---
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# --- Python build / distribution artefacts ---
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+.eggs/
+
+# --- pytest and test artefacts ---
+.pytest_cache/
+.coverage
+htmlcov/
+*.xml
+tests/
+test_*.py
+*_test.py
+
+# --- Jupyter notebooks (not needed in production image) ---
+*.ipynb
+.ipynb_checkpoints/
+
+# --- Git ---
+.git/
+.gitignore
+.gitattributes
+
+# --- IDE and editor files ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Documentation and portfolio assets ---
+*.pdf
+screenshots/
+docs/
+*.md
+!README.md
+
+# --- Local SQLite database (persisted via Docker volume instead) ---
+*.db
+*.sqlite
+*.sqlite3
+data/*.db
+
+# --- Local logs ---
+*.log
+logs/
+
+# --- Docker files (not needed inside the image itself) ---
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# --- CI/CD ---
+.github/
+.gitlab-ci.yml
