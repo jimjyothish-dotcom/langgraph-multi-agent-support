@@ -5,7 +5,7 @@ A production-grade multi-agent AI system built with LangGraph and LangChain,
 demonstrating coordinator-worker orchestration, RAG-based knowledge retrieval,
 LLMOps observability, and intelligent human escalation.
 
-📄 **[Portfolio Document (PDF)](langgraph-multi-agent-support.pdf)** — full write-up with architecture, sample interactions, and observability screenshots
+
 
 ---
 
